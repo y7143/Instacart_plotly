@@ -35,10 +35,33 @@ instacart %>%
   plot_ly(x = ~ aisle, y = ~ order_count, color = ~ aisle, type = "bar", text = ~text_label)
 ```
 
+### Heatmap for number of orders in each day of week by aisles in "dairy eggs" department
+```{r}
+instacart %>% 
+  filter(department == "dairy eggs") %>%
+  mutate(order_dow = factor(order_dow),
+         order_dow = fct_recode(order_dow,
+                                "Monday" = "0",
+                                "Tuesday" = "1",
+                                "Wednesday" = "2",
+                                "Thursday" = "3",
+                                "Friday" = "4",
+                                "Saturday" = "5",
+                                "Sunday" = "6")) %>%     #recode the order_dow
+  group_by(order_dow, department, aisle, aisle_id) %>% 
+  count() %>% 
+  mutate(order_count = n,
+         text_label = str_c("aisle id:", aisle_id, "\nDepartment: ", department)) %>%
+  plot_ly(x = ~aisle, y = ~order_dow, z = ~order_count, type = "heatmap", text = ~text_label)
+```
+
+
 
 
 Column {data-width=550}
 -----------------------------------------------------------------------
+
+
 
 ###Distribution of order hour of day in "dairy eggs" department
 ```{r Distri}
