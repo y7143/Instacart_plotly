@@ -23,9 +23,34 @@ instacart = read_csv("../data/instacart_train_data.csv.zip")
 
 Column {data-width=450}
 -----------------------------------------------------------------------
-
+### Number of orders in "dairy eggs" department
+```{r bar,message=FALSE}
+instacart %>% 
+  count(department, aisle, aisle_id) %>%
+  filter(department == "dairy eggs") %>%
+  mutate(order_count = n,
+         aisle = factor(aisle),
+         aisle = fct_reorder(aisle, n),
+         text_label = str_c("aisle id:", aisle_id, "\nDepartment: ", department)) %>%
+  plot_ly(x = ~ aisle, y = ~ order_count, color = ~ aisle, type = "bar", text = ~text_label)
+```
 
 
 
 Column {data-width=550}
 -----------------------------------------------------------------------
+
+###Distribution of order hour of day in "dairy eggs" department
+```{r Distri}
+distr_order_hour = 
+  instacart %>% 
+  group_by(department, aisle, aisle_id, order_hour_of_day) %>%
+  count() %>%
+  filter(department == "dairy eggs") %>%
+  mutate(order_count = n) %>%
+  ggplot(aes(x = order_hour_of_day, y = order_count, color = aisle)) +
+  geom_point() +
+  geom_line()
+
+ggplotly(distr_order_hour)
+```
